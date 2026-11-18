@@ -243,6 +243,54 @@ describe('Home', () => {
     ).toBeInTheDocument();
   });
 
+  it('recovers UI when analyzer reports a fatal fault via stopped state', async () => {
+    const mockLog = { error: vi.fn(), info: vi.fn(), warn: vi.fn() };
+    const mockTrackException = vi.fn();
+    const mockAppInsights = {
+      trackEvent: vi.fn(),
+      trackException: mockTrackException,
+    };
+
+    renderWithRouter(
+      <TelemetryContext.Provider value={mockAppInsights}>
+        <Home {...defaultProps} log={mockLog} />
+      </TelemetryContext.Provider>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Start listening/i }));
+
+    await waitFor(() => {
+      expect(mockAnalyzerHandlers.statechange).toBeDefined();
+    });
+
+    act(() => {
+      mockAnalyzerHandlers.statechange({
+        from: { status: 'settling' },
+        to: {
+          status: 'stopped',
+          error: { name: 'ProcessorError', message: 'worklet failed' },
+        },
+        reason: 'failed',
+      });
+    });
+
+    await waitFor(() => {
+      expect(mockLog.error).toHaveBeenCalledWith(
+        'ProcessorError: worklet failed'
+      );
+    });
+    expect(mockTrackException).toHaveBeenCalledWith({
+      exception: expect.objectContaining({
+        name: 'ProcessorError',
+        message: 'worklet failed',
+      }),
+    });
+    expect(
+      screen.getByRole('button', { name: /Start listening/i })
+    ).toBeInTheDocument();
+    expect(mockAnalyzer.stop).toHaveBeenCalled();
+  });
+
   it('handles getUserMedia rejection gracefully', async () => {
     const mockLog = { error: vi.fn(), info: vi.fn(), warn: vi.fn() };
     const mockTrackException = vi.fn();
