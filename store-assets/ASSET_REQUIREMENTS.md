@@ -3,6 +3,8 @@
 This directory is the source of truth for regenerating BPM Techno store
 listings. Keep all generated files in their existing store-specific folders.
 
+Release overview (all four surfaces): [`../STORE_RELEASES.md`](../STORE_RELEASES.md).
+
 ## Regenerate everything
 
 ```powershell
@@ -17,21 +19,45 @@ npm run store-assets:microsoft
 npm run store-assets:app-store
 ```
 
-The screenshot generators capture the current production experience from
-`https://bpmtech.no`. Review the generated screenshots whenever the production
-layout, navigation, copy, or monetization changes.
+Microsoft Store screenshots capture the production web experience from
+`https://bpmtech.no`. Apple and Google Play screenshots are generated from
+native comps (`apple-app-store/source/native-screens.html` and
+`google-play/source/native-phone-screens.html`) so those listings match the
+SwiftUI / Kotlin apps. Review generated screenshots whenever the product UI,
+navigation, or copy changes.
 
 ## Microsoft Store
 
 All Microsoft Store images must be PNG and smaller than 50 MB.
 
+Release playbook: [`../MICROSOFT_STORE_RELEASE.md`](../MICROSOFT_STORE_RELEASE.md)
+
+Web host playbook (PWA source): [`../WEB_RELEASE.md`](../WEB_RELEASE.md)
+
+Package identity: `microsoft-store/package-identity.json`
+
+Readiness / packaging:
+
+```shell
+npm run microsoft-store:check
+MS_STORE_PUBLISHER_ID="CN=..." npm run microsoft-store:package
+```
+
 ### Screenshots
 
 Folder: `microsoft-store/screenshots/desktop/`
 
+Generated from production with the shared screenshot capture helper. Current set:
+
+- `01-live-bpm-counter.png`
+- `02-audio-url-analyzer.png`
+- `03-tap-tempo.png`
+- `04-bpm-to-milliseconds.png`
+- `05-half-double-time.png`
+
 | Asset | Requirement |
 |---|---|
-| Desktop screenshots | At least 1; 4 recommended |
+| Desktop screenshots | At least 1; 5 generated |
 | Dimensions | 1366 x 768 or larger; up to 3840 x 2160 |
 | Orientation | Landscape or portrait |
 | Maximum | 30 files in the current Partner Center UI |
@@ -104,20 +130,32 @@ Supported sets generated for this app:
 - 10-inch tablet
 - Chromebook
 
-Each device family contains 5 screenshots. Google Play accepts 2 to 8 per
-supported family. Use JPEG or opaque 24-bit PNG, keep every side between
-320 and 3840 pixels, keep the aspect ratio between 2:1 and 1:2, and keep each
-file below 8 MB. Assets in this repository are at least 1080 pixels wide for
-stronger promotional eligibility.
+Each device family contains 5 native-app screenshots:
+
+1. Analyze home
+2. Analyze result
+3. Tap tempo
+4. Metronome
+5. Recording in progress
+
+Google Play accepts 2 to 8 per supported family. Use JPEG or opaque 24-bit PNG,
+keep every side between 320 and 3840 pixels, keep the aspect ratio between 2:1
+and 1:2, and keep each file below 8 MB. Phone assets are generated at 1080 px
+width for stronger promotional eligibility.
 
 Wear OS, Android TV, Android Automotive OS, and Android XR assets are not
 generated because the app does not target those form factors.
 
-Editable source:
-`google-play/source/feature-graphic.html`
+Editable sources:
+
+- `google-play/source/feature-graphic.html`
+- `google-play/source/native-phone-screens.html`
 
 Generator:
 `../scripts/generate-google-play-assets.mjs`
+
+Readiness gate:
+`npm run google-play:check`
 
 Official references:
 
@@ -163,15 +201,21 @@ App Store Connect accepts 1 to 10 screenshots per supported device family and
 scales the largest current master size for smaller displays. Use PNG, JPEG, or
 JPG without transparency.
 
-The current images are generated from the production web experience. Recapture
-from the final iOS/iPadOS build if its safe areas, system bars, navigation, or
-permission UI differ visibly.
+Screenshots are generated from native SwiftUI comps in
+`apple-app-store/source/native-screens.html` (not the production website).
+Prefer replacing comps with TestFlight / device captures when system chrome
+must match the shipped binary exactly.
 
 Apple Watch, Apple TV, Apple Vision Pro, and macOS assets are not generated
 because those platforms are not currently targeted.
 
 Generator:
 `../scripts/generate-apple-app-store-assets.mjs`
+
+Release playbook: [`../APP_STORE_LAUNCH.md`](../APP_STORE_LAUNCH.md)
+
+Readiness gate:
+`npm run app-store:check`
 
 Official references:
 
