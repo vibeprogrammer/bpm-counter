@@ -17,21 +17,42 @@ npm run store-assets:microsoft
 npm run store-assets:app-store
 ```
 
-The screenshot generators capture the current production experience from
-`https://bpmtech.no`. Review the generated screenshots whenever the production
-layout, navigation, copy, or monetization changes.
+Microsoft and Apple screenshot generators capture the current production web
+experience from `https://bpmtech.no`. Google Play screenshots are generated from
+native Compose mockups in `google-play/source/native-phone-screens.html` so the
+Play listing matches the Kotlin app, not the TWA/web shell. Review generated
+screenshots whenever the product UI, navigation, or copy changes.
 
 ## Microsoft Store
 
 All Microsoft Store images must be PNG and smaller than 50 MB.
 
+Release playbook: [`../MICROSOFT_STORE_RELEASE.md`](../MICROSOFT_STORE_RELEASE.md)
+
+Package identity: `microsoft-store/package-identity.json`
+
+Readiness / packaging:
+
+```shell
+npm run microsoft-store:check
+MS_STORE_PUBLISHER_ID="CN=..." npm run microsoft-store:package
+```
+
 ### Screenshots
 
 Folder: `microsoft-store/screenshots/desktop/`
 
+Generated from production with the shared screenshot capture helper. Current set:
+
+- `01-live-bpm-counter.png`
+- `02-audio-url-analyzer.png`
+- `03-tap-tempo.png`
+- `04-bpm-to-milliseconds.png`
+- `05-half-double-time.png`
+
 | Asset | Requirement |
 |---|---|
-| Desktop screenshots | At least 1; 4 recommended |
+| Desktop screenshots | At least 1; 5 generated |
 | Dimensions | 1366 x 768 or larger; up to 3840 x 2160 |
 | Orientation | Landscape or portrait |
 | Maximum | 30 files in the current Partner Center UI |
@@ -104,20 +125,32 @@ Supported sets generated for this app:
 - 10-inch tablet
 - Chromebook
 
-Each device family contains 5 screenshots. Google Play accepts 2 to 8 per
-supported family. Use JPEG or opaque 24-bit PNG, keep every side between
-320 and 3840 pixels, keep the aspect ratio between 2:1 and 1:2, and keep each
-file below 8 MB. Assets in this repository are at least 1080 pixels wide for
-stronger promotional eligibility.
+Each device family contains 5 native-app screenshots:
+
+1. Analyze home
+2. Analyze result
+3. Tap tempo
+4. Metronome
+5. Recording in progress
+
+Google Play accepts 2 to 8 per supported family. Use JPEG or opaque 24-bit PNG,
+keep every side between 320 and 3840 pixels, keep the aspect ratio between 2:1
+and 1:2, and keep each file below 8 MB. Phone assets are generated at 1080 px
+width for stronger promotional eligibility.
 
 Wear OS, Android TV, Android Automotive OS, and Android XR assets are not
 generated because the app does not target those form factors.
 
-Editable source:
-`google-play/source/feature-graphic.html`
+Editable sources:
+
+- `google-play/source/feature-graphic.html`
+- `google-play/source/native-phone-screens.html`
 
 Generator:
 `../scripts/generate-google-play-assets.mjs`
+
+Readiness gate:
+`npm run google-play:check`
 
 Official references:
 
